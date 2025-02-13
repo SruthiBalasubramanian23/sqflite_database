@@ -17,23 +17,22 @@ Future<void> initializeDatabase() async {
 
 Future<void> getAllStudents() async {
   final List<Map<String, dynamic>> students = await _db.query('student');
-  
+
   // Convert database data to StudentModel list
   studentListNotifier.value =
       students.map((e) => StudentModel.fromMap(e)).toList();
-  
+
   log("Updated student list: ${studentListNotifier.value.toString()}"); // Debug log
 
   // Notify UI to refresh
   studentListNotifier.notifyListeners();
 }
 
-
 Future<void> addStudent(StudentModel value) async {
   await _db.rawInsert(
       'INSERT INTO student (name,age) VALUES (?,?)', [value.name, value.age]);
   //studentListNotifier.notifyListeners();
- await  getAllStudents();
+  await getAllStudents();
   log(value.toString());
 }
 
@@ -42,12 +41,16 @@ Future<void> deleteStudent(int id) async {
   getAllStudents();
 }
 
-Future<void> updateStudent(int id,StudentModel updatedStudent) async {
+Future<void> updateStudent(int id, StudentModel updatedStudent) async {
   await _db.rawUpdate('UPDATE student SET name = ?, age = ? WHERE id =?',
       [updatedStudent.name, updatedStudent.age, id]);
-  
+
   log("Student updated: ${updatedStudent.toString()}");
   log("Student updated: ${updatedStudent.name.toString()}");
   log("Student updated: ${updatedStudent.age.toString()}");
-   await getAllStudents(); 
+  await getAllStudents();
+}
+
+Future<void> closeDatabase() async{
+ await  _db.close();
 }

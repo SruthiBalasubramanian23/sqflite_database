@@ -41,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ageController.dispose();
     nameFocusNode.dispose();
     ageFocusNode.dispose();
+    closeDatabase();
 
     super.dispose();
   }
