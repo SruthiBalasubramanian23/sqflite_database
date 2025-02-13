@@ -3,7 +3,8 @@ import 'package:sqflite_example/functions/db_functions.dart';
 import 'package:sqflite_example/model/data_model.dart';
 
 class ListStudentWidget extends StatelessWidget {
-  const ListStudentWidget({super.key});
+  final void Function(StudentModel studentModel, int index) callback;
+  const ListStudentWidget({super.key, required this.callback});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class ListStudentWidget extends StatelessWidget {
               final data = studentList[index];
               return ListTile(
                 title: Text(data.name),
-                subtitle: Text(data.age),
+                subtitle: Text(data.age.toString()),
                 trailing: SizedBox(
                   width: 100,
                   child: Row(
@@ -31,7 +32,7 @@ class ListStudentWidget extends StatelessWidget {
                           )),
                       IconButton(
                           onPressed: () {
-                            _editStudent(context, data);
+                            callback(data, index);
                           },
                           icon: const Icon(
                             Icons.edit,
@@ -46,53 +47,6 @@ class ListStudentWidget extends StatelessWidget {
               return const Divider();
             },
             itemCount: studentList.length);
-      },
-    );
-  }
-
-  void _editStudent(BuildContext context, StudentModel student) {
-    final nameController = TextEditingController(text: student.name);
-    final ageController = TextEditingController(text: student.age);
-
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: const Text("Edit Student"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: "Name"),
-              ),
-              TextField(
-                controller: ageController,
-                decoration: const InputDecoration(labelText: "Age"),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                final updatedStudent = StudentModel(
-                  id: student.id,
-                  name: nameController.text,
-                  age: ageController.text,
-                );
-                updateStudent(updatedStudent);
-                Navigator.of(ctx).pop();
-              },
-              child: const Text("Update"),
-            ),
-          ],
-        );
       },
     );
   }
